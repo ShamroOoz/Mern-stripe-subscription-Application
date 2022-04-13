@@ -16,9 +16,9 @@ const Home = () => {
                   Business is only as good as its tools.
                 </h1>
                 <p className="text-xl md:text-2xl font-extrabold leading-8 mb-10">
-                  We&rsquo;re different. Nogodo is the only SaaS business
-                  platform that lets you run your business on one platform,
-                  seamlessly across all digital channels.
+                  We&rsquo;re different. Sun is the only SaaS business platform
+                  that lets you run your business on one platform, seamlessly
+                  across all digital channels.
                 </p>
                 <div className="flex flex-wrap -mx-2 mb-6">
                   <div className="w-full md:w-auto lg:w-7/12 px-2 mb-2 md:mb-0">
