@@ -1,7 +1,9 @@
 import React from "react";
 import { CheckCircleIcon } from "@heroicons/react/outline";
+import { useServices } from "../Context/ServicesContext";
 
 const Pricing = () => {
+  const { user } = useServices();
   return (
     <section className="py-26 bg-white">
       <div className="container px-4 mx-auto">
@@ -51,7 +53,7 @@ const Pricing = () => {
                 className="inline-block w-full py-4 px-6 text-center leading-6 text-lg text-white font-extrabold bg-indigo-800 hover:bg-indigo-900 border-3 border-indigo-900 shadow rounded transition duration-200"
                 href="/"
               >
-                Get Started
+                {user ? " Get Started" : "Sing Up"}
               </a>
             </div>
           </div>
@@ -96,7 +98,7 @@ const Pricing = () => {
                 className="inline-block w-full py-4 px-6 text-center leading-6 text-lg text-white font-extrabold bg-indigo-800 hover:bg-indigo-900 border-3 border-indigo-900 shadow rounded transition duration-200"
                 href="/"
               >
-                Get Started
+                {user ? " Get Started" : "Sing Up"}
               </a>
             </div>
           </div>
@@ -141,7 +143,7 @@ const Pricing = () => {
                 className="inline-block w-full py-4 px-6 text-center leading-6 text-lg text-white font-extrabold bg-indigo-800 hover:bg-indigo-900 border-3 border-indigo-900 shadow rounded transition duration-200"
                 href="/"
               >
-                Get Started
+                {user ? " Get Started" : "Sing Up"}
               </a>
             </div>
           </div>

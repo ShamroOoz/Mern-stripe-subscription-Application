@@ -1,10 +1,11 @@
 import React, { useReducer, useEffect, useRef } from "react";
 import { SunIcon, MenuAlt3Icon, XIcon } from "@heroicons/react/outline";
 import { NavLink } from "react-router-dom";
-
+import { useServices } from "../Context/ServicesContext";
 const NavBar = () => {
   const [isOpen, setisOpen] = useReducer((state) => !state, false);
   const node = useRef();
+  const { user, signout } = useServices();
 
   const trackSidebar = (e) => {
     if (node.current.contains(e.target)) {
@@ -54,18 +55,30 @@ const NavBar = () => {
           </button>
         </div>
         <div className="hidden md:flex items-center">
-          <NavLink
-            className="inline-block mr-6 text-lg font-bold hover:text-indigo-800"
-            to="Singin"
-          >
-            Sign In
-          </NavLink>
-          <NavLink
-            className="inline-block py-4 px-6 text-center leading-6 text-lg text-white font-bold bg-indigo-800 hover:bg-indigo-900 border-3 border-indigo-900 shadow rounded transition duration-200"
-            to="Singup"
-          >
-            Sign Up
-          </NavLink>
+          {!user ? (
+            <>
+              <NavLink
+                className="inline-block mr-6 text-lg font-bold hover:text-indigo-800"
+                to="Singin"
+              >
+                Sign In
+              </NavLink>
+              <NavLink
+                className="inline-block py-4 px-6 text-center leading-6 text-lg text-white font-bold bg-indigo-800 hover:bg-indigo-900 border-3 border-indigo-900 shadow rounded transition duration-200"
+                to="Singup"
+              >
+                Sign Up
+              </NavLink>
+            </>
+          ) : (
+            <NavLink
+              onClick={() => signout()}
+              className="inline-block py-4 px-6 text-center leading-6 text-lg text-white font-bold bg-indigo-800 hover:bg-indigo-900 border-3 border-indigo-900 shadow rounded transition duration-200"
+              to="/"
+            >
+              Sing Out
+            </NavLink>
+          )}
         </div>
       </nav>
       {/* Side Menu */}
@@ -109,20 +122,32 @@ const NavBar = () => {
               </li>
             </ul>
           </div>
-          <div>
-            <NavLink
-              className="block mb-6 text-center leading-6 text-lg font-bold hover:text-indigo-800"
-              to="Singin"
-            >
-              Sign In
-            </NavLink>
-            <NavLink
-              className="block py-4 px-6 text-center leading-6 text-lg text-white font-bold bg-indigo-800 hover:bg-indigo-900 border-3 border-indigo-900 shadow rounded transition duration-200"
-              to="Singup"
-            >
-              Sign Up
-            </NavLink>
-          </div>
+          {!user ? (
+            <div>
+              <NavLink
+                className="block mb-6 text-center leading-6 text-lg font-bold hover:text-indigo-800"
+                to="Singin"
+              >
+                Sign In
+              </NavLink>
+              <NavLink
+                className="block py-4 px-6 text-center leading-6 text-lg text-white font-bold bg-indigo-800 hover:bg-indigo-900 border-3 border-indigo-900 shadow rounded transition duration-200"
+                to="Singup"
+              >
+                Sign Up
+              </NavLink>
+            </div>
+          ) : (
+            <div>
+              <NavLink
+                onClick={() => signout()}
+                className="block py-4 px-6 text-center leading-6 text-lg text-white font-bold bg-indigo-800 hover:bg-indigo-900 border-3 border-indigo-900 shadow rounded transition duration-200"
+                to="/"
+              >
+                Sing Out
+              </NavLink>
+            </div>
+          )}
         </nav>
       </div>
     </section>

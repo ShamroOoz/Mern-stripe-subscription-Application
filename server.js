@@ -18,7 +18,7 @@ app.use(express.json({ limit: "5mb" }));
 app.use(morgan("tiny"));
 app.use(
   cors({
-    origin: [process.env.CLIENT_URL],
+    origin: true,
   })
 );
 //welcome route

@@ -1,25 +1,26 @@
 import User from "../Models/user.js";
 import { hashPassword, comparePassword, stripeApi } from "../Helpers/auth.js";
 import jwt from "jsonwebtoken";
+import { json } from "express";
 
 export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
     if (!(name && email)) {
-      return res.json({
+      return res.status(404).json({
         error: "All field is required {name, email, password}",
       });
     }
 
     if (!password || password.length < 6) {
-      return res.json({
+      return res.status(404).json({
         error: "Password is required and should be 6 characters long",
       });
     }
     const exist = await User.findOne({ email });
     if (exist) {
-      return res.json({
+      return res.status(404).json({
         error: "Email is taken",
       });
     }
@@ -51,39 +52,44 @@ export const register = async (req, res) => {
         user: rest,
       });
     } catch (err) {
-      console.log(err);
+      return res.status(404).json({
+        error: "Something went wrong",
+      });
     }
   } catch (error) {
-    console.log(error);
+    return res.status(404).json({
+      error: "Something went wrong",
+    });
   }
 };
 
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
     if (!email) {
-      return res.json({
+      return res.status(404).json({
         error: "Email is required ..",
       });
     }
 
     if (!password || password.length < 6) {
-      return res.json({
+      return res.status(404).json({
         error: "Password is required and should be 6 characters long",
       });
     }
     // check email
     const user = await User.findOne({ email });
+
     if (!user) {
-      return res.json({
+      return res.status(404).json({
         error: "No user found",
       });
     }
     // check password
     const match = await comparePassword(password, user.password);
+
     if (!match) {
-      return res.json({
+      return res.status(404).json({
         error: "Wrong password",
       });
     }
@@ -92,13 +98,23 @@ export const login = async (req, res) => {
       expiresIn: "7d",
     });
 
-    const { _, ...rest } = user._doc;
-
-    res.json({
+    res.status(200).json({
       token,
-      user: rest,
+      user: user._doc,
     });
   } catch (err) {
-    console.log(err);
+    return res.status(404).json({
+      error: "Something went wrong...",
+    });
+  }
+};
+
+export const getMe = async (req, res) => {
+  try {
+    if (!req.user._id) return res.sendStatus(401);
+    const user = await User.findById(req.user._id).select("-password");
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(401).json({ error: " Unauthorized To Acesss this " });
   }
 };
