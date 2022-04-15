@@ -8,6 +8,9 @@ import Dashboard from "./Components/Dashboard";
 import NotFound from "./Pages/NotFound";
 import ReqAuth from "./Components/ReqAuth";
 import { NotReqAuth } from "./Components/ReqAuth";
+import Success from "./Pages/Success";
+import Cancel from "./Pages/Cancel";
+
 const App = () => {
   return (
     <Routes>
@@ -19,6 +22,8 @@ const App = () => {
         </Route>
         <Route element={<ReqAuth />}>
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="checkout/success" element={<Success />} />
+          <Route path="checkout/cancel" element={<Cancel />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Route>

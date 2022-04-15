@@ -14,7 +14,17 @@ mongoose
   .catch((err) => console.log("DB Connection Error ", err));
 
 // middlewares
-app.use(express.json({ limit: "5mb" }));
+//app.use(express.json({ limit: "5mb" }));
+app.use(
+  express.json({
+    verify: function (req, res, buf) {
+      console.log(req.originalUrl);
+      if (req.originalUrl.startsWith("/api/webhook")) {
+        req.rawBody = buf.toString();
+      }
+    },
+  })
+);
 app.use(morgan("tiny"));
 app.use(
   cors({

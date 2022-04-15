@@ -5,6 +5,7 @@ import { useServices } from "../Context/ServicesContext";
 const ReqAuth = () => {
   const { user, getIdToken } = useServices();
   let token = getIdToken();
+
   if (token && user) return <Outlet />;
 
   return <Navigate to="Singin" />;
