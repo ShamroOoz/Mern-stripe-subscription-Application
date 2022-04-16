@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import { readdirSync } from "fs";
 import morgan from "morgan";
-import { corsOptions, credentials } from "./config/corsOptions.js";
+import { credentials } from "./config/corsOptions.js";
 
 const app = express();
 
@@ -18,12 +18,9 @@ mongoose
 
 app.use(morgan("tiny"));
 
-// Handle options credentials check - before CORS!
-// and fetch cookies credentials requirement
-app.use(credentials);
-
 // Cross Origin Resource Sharing
-app.use(cors(corsOptions));
+app.use(credentials);
+app.use(cors());
 
 //app.use(express.json({ limit: "5mb" }));
 app.use(
