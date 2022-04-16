@@ -29,7 +29,6 @@ app.use(cors(corsOptions));
 app.use(
   express.json({
     verify: function (req, res, buf) {
-      console.log(req.originalUrl);
       if (req.originalUrl.startsWith("/api/webhook")) {
         req.rawBody = buf.toString();
       }
