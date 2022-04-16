@@ -1,6 +1,6 @@
 const API =
   process.env.NODE_ENV === "production"
-    ? "https://react-e-commerce-stripe-payment-application-backend-server.vercel.app"
+    ? "https://stripe-subscription-backend-app.vercel.app/api"
     : "http://localhost:5000/api";
 
 export async function fetchFromAPI(endpoint, opts) {
