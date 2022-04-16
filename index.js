@@ -10,7 +10,10 @@ const app = express();
 
 // db
 mongoose
-  .connect(process.env.DATABASE)
+  .connect(process.env.DATABASE, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("DB Connected"))
   .catch((err) => console.log("DB Connection Error ", err));
 
@@ -21,7 +24,11 @@ app.use(morgan("tiny"));
 // Cross Origin Resource Sharing
 app.use(credentials);
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [process.env.CLIENT_URL],
+  })
+);
 
 app.use(
   express.json({
