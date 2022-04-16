@@ -1,11 +1,26 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { CheckCircleIcon } from "@heroicons/react/outline";
 import { useServices } from "../Context/ServicesContext";
 import { useNavigate } from "react-router-dom";
 import { useStripe } from "@stripe/react-stripe-js";
+import Loading from "../Pages/Loading";
+import { Link } from "react-router-dom";
 
 const PriceCard = ({ id, nickname, unit_amount, product, ...props }) => {
-  const { user, createSubscription } = useServices();
+  const { user, createSubscription, subscriptionsData, customerPortal } =
+    useServices();
+  const [loading, setloading] = useState(false);
+
+  let lprops = {
+    loading,
+    size: 15,
+    color: "#fff",
+  };
+
+  useEffect(() => {
+    return () => setloading(false);
+  }, []);
+
   let navigator = useNavigate();
   const stripe = useStripe();
 
@@ -13,9 +28,22 @@ const PriceCard = ({ id, nickname, unit_amount, product, ...props }) => {
     if (!stripe) {
       return;
     }
+    setloading(true);
+
     if (!user) {
-      navigator("Singin");
+      navigator("Singin", { replace: true });
       return;
+    }
+
+    if (Object.keys(subscriptionsData).length !== 0) {
+      try {
+        const url = await customerPortal();
+        window.location.href = url;
+        return;
+      } catch (error) {
+        console.log(error);
+        return setloading(false);
+      }
     }
     try {
       const { sessionId } = await createSubscription({ priceId: id });
@@ -23,13 +51,31 @@ const PriceCard = ({ id, nickname, unit_amount, product, ...props }) => {
         sessionId,
       });
     } catch (error) {
+      setloading(false);
       console.log(error);
     }
   };
 
+  const buttonTextlOGOUT = () => {
+    return user
+      ? subscriptionsData?.plan?.id === id
+        ? "Buy the plan"
+        : "Update Plan "
+      : "Sign In";
+  };
+
+  const buttonText = () => {
+    return subscriptionsData?.plan?.id === id
+      ? "Access plan"
+      : buttonTextlOGOUT();
+  };
+
   return (
     <>
-      <div className="w-full md:w-1/3 px-4 mb-12 md:mb-0">
+      <div
+        disabled={loading}
+        className="w-full disabled:opacity-40 disabled:cursor-not-allowed  md:w-1/3 px-4 mb-12 md:mb-0"
+      >
         <div className="max-w-md mx-auto px-6 py-12 md:p-12 bg-white border-4 border-indigo-900 rounded-2xl shadow-md">
           <div className="text-center mb-12">
             <span className="block text-lg font-extrabold text-indigo-500 leading-7">
@@ -58,12 +104,22 @@ const PriceCard = ({ id, nickname, unit_amount, product, ...props }) => {
             <CheckCircleIcon className="block w-6 h-6 mr-2 object-contain text-green-600" />
             <span className="text-lg font-bold">Free Email Support</span>
           </div>
-          <button
-            className="inline-block w-full py-4 px-6 text-center leading-6 text-lg text-white font-extrabold bg-indigo-800 hover:bg-indigo-900 border-3 border-indigo-900 shadow rounded transition duration-200"
-            onClick={() => handleSubmit()}
-          >
-            {user ? "Buy Now" : "Sing In"}
-          </button>
+          {subscriptionsData?.plan?.id === id ? (
+            <Link
+              className={`inline-block disabled:opacity-60 w-full py-4 px-6 text-center leading-6 text-lg text-indigo-800 font-extrabold bg-white hover:bg-indigo-900 hover:text-white border-4 border-indigo-900 shadow rounded transition duration-200`}
+              to="dashboard/features"
+            >
+              {loading ? <Loading {...lprops} /> : buttonText()}
+            </Link>
+          ) : (
+            <button
+              disabled={loading}
+              className={`inline-block disabled:opacity-60 w-full py-4 px-6 text-center leading-6 text-lg text-white font-extrabold bg-indigo-800 hover:bg-indigo-900  shadow rounded transition duration-200`}
+              onClick={() => handleSubmit()}
+            >
+              {loading ? <Loading {...lprops} /> : buttonText()}
+            </button>
+          )}
         </div>
       </div>
     </>

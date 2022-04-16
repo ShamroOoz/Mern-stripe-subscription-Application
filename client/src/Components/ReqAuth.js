@@ -16,7 +16,7 @@ export default ReqAuth;
 export const NotReqAuth = () => {
   const { user, getIdToken } = useServices();
   let token = getIdToken();
-  if (!token && !user) return <Outlet />;
+  if (!token || !user) return <Outlet />;
 
   return <Navigate to="/" replace={true} />;
 };

@@ -113,8 +113,11 @@ export const getMe = async (req, res) => {
   try {
     if (!req.user._id) return res.sendStatus(401);
     const user = await User.findById(req.user._id).select("-password");
-    res.status(200).json(user);
+    if (!user) {
+      return res.status(401).json({ error: " Unauthorized To Acesss this " });
+    }
+    return res.status(200).json(user);
   } catch (error) {
-    res.status(401).json({ error: " Unauthorized To Acesss this " });
+    return res.status(401).json({ error: " Unauthorized To Acesss this " });
   }
 };

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 //
 export const useProvideService = () => {
   const [user, setUser] = useState(null);
+  const [subscriptionsData, setsubscriptionsData] = useState(null);
   const [products, setProducts] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -17,12 +18,22 @@ export const useProvideService = () => {
         return setUser(response);
       });
     };
-
     fetchData().catch((err) => {
       setLoading(false);
+      //localStorage.clear();
       console.error(err);
     });
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await getSubscription();
+      return;
+    };
+    if (!subscriptionsData) {
+      fetchData().catch(console.error);
+    }
+  }, [subscriptionsData, user]);
 
   const signin = async (body) => {
     return await fetchFromAPI("login", {
@@ -48,6 +59,7 @@ export const useProvideService = () => {
 
   const signout = async () => {
     setUser(null);
+    setsubscriptionsData(null);
     return localStorage.clear();
   };
 
@@ -71,6 +83,15 @@ export const useProvideService = () => {
     });
   };
 
+  const getSubscription = async () => {
+    return await fetchFromAPI("subscriptions", {
+      method: "Get",
+    }).then((response) => {
+      setsubscriptionsData(response);
+      return;
+    });
+  };
+
   const customerPortal = async () => {
     return fetchFromAPI("customer-portal", {
       method: "GET",
@@ -87,5 +108,7 @@ export const useProvideService = () => {
     getIdToken,
     createSubscription,
     customerPortal,
+    getSubscription,
+    subscriptionsData,
   };
 };

@@ -10,6 +10,7 @@ import ReqAuth from "./Components/ReqAuth";
 import { NotReqAuth } from "./Components/ReqAuth";
 import Success from "./Pages/Success";
 import Cancel from "./Pages/Cancel";
+import Features from "./Components/Features";
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
           <Route path="Singup" element={<SingUp />} />
         </Route>
         <Route element={<ReqAuth />}>
+          <Route path="dashboard/features" element={<Features />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="checkout/success" element={<Success />} />
           <Route path="checkout/cancel" element={<Cancel />} />

@@ -54,17 +54,17 @@ const NavBar = () => {
             <MenuAlt3Icon className="block h-6 w-6" />
           </button>
         </div>
-        <div className="hidden md:flex items-center">
+        <div className="hidden md:flex items-center gap-3">
           {!user ? (
             <>
               <NavLink
-                className="inline-block mr-6 text-lg font-bold hover:text-indigo-800"
+                className="inline-block border-4 border-indigo-900  py-3 px-6 text-center leading-6 text-lg text-indigo-800 font-bold bg-white hover:text-white hover:bg-indigo-800  shadow rounded transition duration-200"
                 to="Singin"
               >
                 Sign In
               </NavLink>
               <NavLink
-                className="inline-block py-4 px-6 text-center leading-6 text-lg text-white font-bold bg-indigo-800 hover:bg-indigo-900 border-3 border-indigo-900 shadow rounded transition duration-200"
+                className="inline-block py-4 px-6 text-center leading-6 text-lg text-white font-bold bg-indigo-800 hover:bg-indigo-900  shadow rounded transition duration-200"
                 to="Singup"
               >
                 Sign Up
@@ -73,7 +73,7 @@ const NavBar = () => {
           ) : (
             <NavLink
               onClick={() => signout()}
-              className="inline-block py-4 px-6 text-center leading-6 text-lg text-white font-bold bg-indigo-800 hover:bg-indigo-900 border-3 border-indigo-900 shadow rounded transition duration-200"
+              className="inline-block py-4 px-6 text-center leading-6 text-lg text-white font-bold bg-indigo-800 hover:bg-indigo-900  shadow rounded transition duration-200"
               to="/"
             >
               Sing Out

@@ -6,7 +6,8 @@ export const prices = async (req, res) => {
   const prices = await stripeApi.prices.list({
     expand: ["data.product"],
   });
-  res.json(prices.data.reverse());
+  let ActivePrice = prices.data.filter((p) => p.active);
+  res.json(ActivePrice.reverse());
 };
 
 export const configStripe = async (req, res) => {
@@ -44,10 +45,6 @@ export const subscriptionStatus = async (req, res) => {
     const session = await stripeApi.checkout.sessions.retrieve(req.query.id, {
       expand: ["line_items"],
     });
-
-    if (session.customer) {
-      const customer = await stripeApi.customers.retrieve(session.customer);
-    }
     return res.status(200).json(session);
   } catch (error) {
     res.status(400).json({ error: "Something went wrong" });
@@ -56,7 +53,19 @@ export const subscriptionStatus = async (req, res) => {
 };
 
 export const subscriptions = async (req, res) => {
-  res.send("subscriptions");
+  try {
+    const user = await User.findById(req.user._id);
+    if (user) {
+      const subscriptions = await stripeApi.subscriptions.retrieve(
+        user.subscriptionsId,
+        { expand: ["default_payment_method"] }
+      );
+      return res.json(subscriptions);
+    }
+    return res.status(401).json({ error: " Unauthorized To Acesss this " });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 export const customerPortal = async (req, res) => {
@@ -67,7 +76,6 @@ export const customerPortal = async (req, res) => {
       customer: user.stripe_customer_id,
       return_url: "http://localhost:3000/dashboard",
     });
-    console.log(portalSession);
     res.json(portalSession.url);
   } catch (err) {
     console.log(err);
@@ -81,7 +89,7 @@ export const webhook = async (req, res) => {
   if (process.env.STRIPE_WEBHOOK_SECRET) {
     let event;
     let signature = req.headers["stripe-signature"];
-    console.log(process.env.STRIPE_WEBHOOK_SECRET);
+
     try {
       event = stripeApi.webhooks.constructEvent(
         req.rawBody,
@@ -94,9 +102,6 @@ export const webhook = async (req, res) => {
     }
     data = event.data.object;
     eventType = event.type;
-  } else {
-    data = req.body.data;
-    eventType = req.body.type;
   }
   if (webHookHandlers[eventType]) {
     webHookHandlers[eventType](data);
