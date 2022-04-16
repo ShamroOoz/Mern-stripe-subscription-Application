@@ -6,15 +6,19 @@ const API =
 export async function fetchFromAPI(endpoint, opts) {
   const { method, body } = { body: null, ...opts };
 
-  const token = localStorage.getItem("userToken") || "";
+  const headers = {
+    "Content-Type": "application/json",
+  };
 
+  const token = localStorage.getItem("userToken");
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
   const res = await fetch(`${API}/${endpoint}`, {
     method,
     ...(body && { body: JSON.stringify(body) }),
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
+    headers,
   });
 
   if (res.status === 200) {
