@@ -18,17 +18,16 @@ const webHookHandlers = {
   // "customer.subscription.updated": async (subscription) => {
   //   console.log(`Subscription status is update 🔕 `, subscription);
   // },
-  // TODO DEFINE THE ID TO UNDEFINE HAVE TO REMOVE IT FROM DB
+
   "customer.subscription.deleted": async (subscription) => {
     try {
-      const updated = await User.findOneAndUpdate(
-        { stripe_customer_id: subscription.customer },
-        {
-          $set: { subscriptionsId: undefined },
-        },
-        { new: true }
-      );
-      console.log(updated);
+      const cancleSub = await User.findOne({
+        stripe_customer_id: subscription.customer,
+      });
+      if (cancleSub) {
+        cancleSub.subscriptionsId = undefined;
+        cancleSub.save();
+      }
     } catch (error) {
       console.log(error);
     }

@@ -11,7 +11,7 @@ const Features = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
-    switch (subscriptionsData.plan.nickname) {
+    switch (subscriptionsData?.plan?.nickname) {
       case "Basic":
         setdataList(getFeatureData(5));
         break;
@@ -27,7 +27,7 @@ const Features = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, subscriptionsData]);
 
-  if (!user || !subscriptionsData || subscriptionsData.status !== "active")
+  if (!user || !subscriptionsData || subscriptionsData?.status !== "active")
     return <Navigate to="/dashboard" replace />;
 
   return (

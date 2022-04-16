@@ -31,7 +31,11 @@ const Dashboard = () => {
   };
 
   return (
-    <section className="py-26 mt-12">
+    <div
+      className={`py-26 mt-12 ${
+        loading && "pointer-events-none cursor-not-allowed"
+      }`}
+    >
       <div className="container px-4 mx-auto">
         <div className="text-center">
           <span className="text-lg font-extrabold text-indigo-500">
@@ -104,7 +108,7 @@ const Dashboard = () => {
                     </Link>
                     <button
                       disabled={loading}
-                      className="inline-block disabled:opacity-40 disabled:cursor-not-allowed w-full md:w-auto py-4 px-6 text-center leading-6 text-lg text-white font-extrabold bg-indigo-800 hover:bg-indigo-900  shadow rounded transition duration-200"
+                      className="inline-block disabled:opacity-40 disabled:cursor-not-allowed w-full md:w-1/2 py-4 px-6 text-center leading-6 text-lg text-white font-extrabold bg-indigo-800 hover:bg-indigo-900  shadow rounded transition duration-200"
                       onClick={() => handleSubscription()}
                     >
                       {loading ? (
@@ -120,7 +124,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

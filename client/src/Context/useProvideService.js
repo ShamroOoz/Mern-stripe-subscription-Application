@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 //
 export const useProvideService = () => {
+  //
   const [user, setUser] = useState(null);
   const [subscriptionsData, setsubscriptionsData] = useState(null);
   const [products, setProducts] = useState(null);
@@ -10,28 +11,47 @@ export const useProvideService = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await getProducts();
       return await fetchFromAPI("getUser", {
         method: "GET",
-      }).then(async (response) => {
-        setLoading(false);
-        return setUser(response);
+      }).then((response) => {
+        setUser(response);
+        return !response?.subscriptionsId && setLoading(false);
       });
     };
-    fetchData().catch((err) => {
-      setLoading(false);
-      //localStorage.clear();
+    let token = getIdToken();
+    token
+      ? fetchData().catch(async (err) => {
+          await signout();
+          console.error(err);
+          return setLoading(false);
+        })
+      : setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    const fetchPrice = async () => {
+      await getProducts();
+    };
+    fetchPrice().catch((err) => {
       console.error(err);
     });
   }, []);
 
   useEffect(() => {
     const fetchData = async () => {
-      await getSubscription();
-      return;
+      return await fetchFromAPI("subscriptions", {
+        method: "Get",
+      }).then((response) => {
+        setsubscriptionsData(response);
+        return setLoading(false);
+      });
     };
-    if (!subscriptionsData) {
-      fetchData().catch(console.error);
+
+    if (user?.subscriptionsId && !subscriptionsData) {
+      fetchData().catch((err) => {
+        console.log(err);
+        return setLoading(false);
+      });
     }
   }, [subscriptionsData, user]);
 
@@ -83,15 +103,6 @@ export const useProvideService = () => {
     });
   };
 
-  const getSubscription = async () => {
-    return await fetchFromAPI("subscriptions", {
-      method: "Get",
-    }).then((response) => {
-      setsubscriptionsData(response);
-      return;
-    });
-  };
-
   const customerPortal = async () => {
     return fetchFromAPI("customer-portal", {
       method: "GET",
@@ -108,7 +119,6 @@ export const useProvideService = () => {
     getIdToken,
     createSubscription,
     customerPortal,
-    getSubscription,
     subscriptionsData,
   };
 };

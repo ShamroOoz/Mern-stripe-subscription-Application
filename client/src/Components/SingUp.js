@@ -44,7 +44,7 @@ const SingUp = () => {
       seterror({ ...error, message: err });
     }
   };
-  // if (loading) return <Loading loading={loading} />;
+
   return (
     <section className="mt-12">
       <div className="container px-4 mx-auto">

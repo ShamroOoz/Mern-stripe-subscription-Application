@@ -49,7 +49,7 @@ const SingIn = () => {
         <div className="max-w-lg mx-auto">
           <div className="text-center  space-y-4">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">Sign In</h2>
-            <p className="text-lg font-bold leading-7 text-red-500">
+            <p className="text-lg font-bold leading-7 text-red-500 capitalize">
               {error.message && error.message}
             </p>
           </div>

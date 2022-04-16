@@ -20,23 +20,26 @@ export const createSubscription = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
-    const session = await stripeApi.checkout.sessions.create({
-      mode: "subscription",
-      payment_method_types: ["card"],
-      line_items: [
-        {
-          price: req.body.priceId,
-          quantity: 1,
-        },
-      ],
-      customer: user.stripe_customer_id,
-      success_url: `http://localhost:3000/checkout/success?success=true&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://localhost:3000/checkout/cancel?canceled=true&session_id={CHECKOUT_SESSION_ID}`,
-    });
-    res.status(200).json({ sessionId: session.id });
+    if (user) {
+      const session = await stripeApi.checkout.sessions.create({
+        mode: "subscription",
+        payment_method_types: ["card"],
+        line_items: [
+          {
+            price: req.body.priceId,
+            quantity: 1,
+          },
+        ],
+        customer: user.stripe_customer_id,
+        success_url: `${process.env.STRIPE_SUCCESS_URL}?success=true&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.STRIPE_CANCEL_URL}?canceled=true&session_id={CHECKOUT_SESSION_ID}`,
+      });
+      return res.status(200).json({ sessionId: session.id });
+    }
+    throw new Error("User Not found 401..");
   } catch (err) {
-    res.status(400).json({ error: "Something WEnt Wrong..." });
     console.log(err);
+    return res.status(400).json({ error: "Something WEnt Wrong..." });
   }
 };
 
@@ -55,16 +58,16 @@ export const subscriptionStatus = async (req, res) => {
 export const subscriptions = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    if (user) {
+    if (user && user.subscriptionsId) {
       const subscriptions = await stripeApi.subscriptions.retrieve(
         user.subscriptionsId,
         { expand: ["default_payment_method"] }
       );
       return res.json(subscriptions);
     }
-    return res.status(401).json({ error: " Unauthorized To Acesss this " });
+    throw new Error("Unauthorized To Acesss this");
   } catch (err) {
-    console.log(err);
+    return res.status(401).json({ error: " Unauthorized To Acesss this " });
   }
 };
 
@@ -74,10 +77,11 @@ export const customerPortal = async (req, res) => {
 
     const portalSession = await stripeApi.billingPortal.sessions.create({
       customer: user.stripe_customer_id,
-      return_url: "http://localhost:3000/dashboard",
+      return_url: `${process.env.CLIENT_URL}/dashboard`,
     });
     res.json(portalSession.url);
   } catch (err) {
+    res.status(500).json({ error: err.message });
     console.log(err);
   }
 };

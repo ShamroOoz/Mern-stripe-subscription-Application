@@ -6,10 +6,14 @@ import { useStripe } from "@stripe/react-stripe-js";
 import Loading from "../Pages/Loading";
 import { Link } from "react-router-dom";
 
-const PriceCard = ({ id, nickname, unit_amount, product, ...props }) => {
+const PriceCard = ({ id, nickname, unit_amount, product }) => {
   const { user, createSubscription, subscriptionsData, customerPortal } =
     useServices();
+
   const [loading, setloading] = useState(false);
+
+  let navigator = useNavigate();
+  const stripe = useStripe();
 
   let lprops = {
     loading,
@@ -20,9 +24,6 @@ const PriceCard = ({ id, nickname, unit_amount, product, ...props }) => {
   useEffect(() => {
     return () => setloading(false);
   }, []);
-
-  let navigator = useNavigate();
-  const stripe = useStripe();
 
   const handleSubmit = async () => {
     if (!stripe) {
@@ -35,7 +36,7 @@ const PriceCard = ({ id, nickname, unit_amount, product, ...props }) => {
       return;
     }
 
-    if (Object.keys(subscriptionsData).length !== 0) {
+    if (subscriptionsData && Object.keys(subscriptionsData)?.length !== 0) {
       try {
         const url = await customerPortal();
         window.location.href = url;
@@ -58,23 +59,23 @@ const PriceCard = ({ id, nickname, unit_amount, product, ...props }) => {
 
   const buttonTextlOGOUT = () => {
     return user
-      ? subscriptionsData?.plan?.id === id
-        ? "Buy the plan"
-        : "Update Plan "
+      ? subscriptionsData && subscriptionsData?.plan?.id !== id
+        ? "Update Plan "
+        : "Buy the plan"
       : "Sign In";
   };
 
   const buttonText = () => {
-    return subscriptionsData?.plan?.id === id
+    return subscriptionsData && subscriptionsData?.plan?.id === id
       ? "Access plan"
       : buttonTextlOGOUT();
   };
-
   return (
     <>
       <div
-        disabled={loading}
-        className="w-full disabled:opacity-40 disabled:cursor-not-allowed  md:w-1/3 px-4 mb-12 md:mb-0"
+        className={`w-full  md:w-1/3 px-4 mb-12 md:mb-0 ${
+          loading && "pointer-events-none cursor-not-allowed"
+        }`}
       >
         <div className="max-w-md mx-auto px-6 py-12 md:p-12 bg-white border-4 border-indigo-900 rounded-2xl shadow-md">
           <div className="text-center mb-12">
