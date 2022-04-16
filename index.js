@@ -27,7 +27,6 @@ app.use(
   express.json({
     verify: function (req, res, buf) {
       if (req.originalUrl === "/api/webhook") {
-        console.log(req.originalUrl);
         req.rawBody = buf.toString();
       }
     },
