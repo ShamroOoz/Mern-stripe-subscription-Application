@@ -22,16 +22,23 @@ app.use(morgan("tiny"));
 app.use(credentials);
 app.use(cors());
 
-//app.use(express.json({ limit: "5mb" }));
-app.use(
-  express.json({
-    verify: function (req, res, buf) {
-      if (req.originalUrl.startsWith("/api/webhook")) {
-        req.rawBody = buf.toString();
-      }
-    },
-  })
-);
+// app.use(
+//   express.json({
+//     verify: function (req, res, buf) {
+//       if (req.originalUrl.startsWith("/api/webhook")) {
+//         req.rawBody = buf.toString();
+//       }
+//     },
+//   })
+// );
+// Use JSON parser for all non-webhook routes
+app.use((req, res, next) => {
+  if (req.originalUrl === "/api/webhook") {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
 
 //welcome route
 app.get("/", (req, res) => {

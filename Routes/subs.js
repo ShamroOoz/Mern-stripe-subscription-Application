@@ -21,6 +21,6 @@ router.get("/subscription-status", requireSignin, subscriptionStatus);
 router.get("/subscriptions", requireSignin, subscriptions);
 router.get("/customer-portal", requireSignin, customerPortal);
 
-router.post("/webhook", webhook);
+router.post("/webhook", express.raw({ type: "application/json" }), webhook);
 
 export default router;
