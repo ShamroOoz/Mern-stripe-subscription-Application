@@ -20,25 +20,20 @@ app.use(morgan("tiny"));
 
 // Cross Origin Resource Sharing
 app.use(credentials);
+
 app.use(cors());
 
-// app.use(
-//   express.json({
-//     verify: function (req, res, buf) {
-//       if (req.originalUrl.startsWith("/api/webhook")) {
-//         req.rawBody = buf.toString();
-//       }
-//     },
-//   })
-// );
-// Use JSON parser for all non-webhook routes
-app.use((req, res, next) => {
-  if (req.originalUrl === "/api/webhook") {
-    next();
-  } else {
-    express.json()(req, res, next);
-  }
-});
+app.use(
+  express.json({
+    verify: function (req, res, buf) {
+      if (req.originalUrl === "/api/webhook") {
+        console.log(req.originalUrl);
+        req.rawBody = buf.toString();
+      }
+    },
+    limit: "5mb",
+  })
+);
 
 //welcome route
 app.get("/", (req, res) => {
